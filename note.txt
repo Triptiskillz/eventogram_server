@@ -1,0 +1,22 @@
+CREATE DATABASE EVENT
+\c 
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    reset_token TEXT
+);
+ <input type="file" name="profilePicture">
+
+ CREATE TABLE events (id SERIAL PRIMARY KEY,name VARCHAR(255) NOT NULL,date DATE NOT NULL,time TIME NOT NULL,location VARCHAR(255) NOT NULL,description TEXT NOT NULL,ticket_price DECIMAL(10, 2),is_public BOOLEAN DEFAULT true,creator_id INTEGER REFERENCES users(id) NOT NULL);
+ 
+ CREATE TABLE event_media (id SERIAL PRIMARY KEY,event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,media_type VARCHAR(20) NOT NULL, media_path VARCHAR(255) NOT NULL,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+
+ ALTER TABLE events ADD COLUMN status VARCHAR(20) DEFAULT 'active';
+
+ -- payments table
+CREATE TABLE payments (id SERIAL PRIMARY KEY,user_id INTEGER REFERENCES users(id),event_id INTEGER REFERENCES events(id),amount DECIMAL(10, 2) NOT NULL,payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+
+-- tickets table
+CREATE TABLE tickets (id SERIAL PRIMARY KEY,user_id INTEGER REFERENCES users(id),event_id INTEGER REFERENCES events(id),payment_id INTEGER REFERENCES payments(id),quantity INTEGER NOT NULL,purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
